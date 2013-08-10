@@ -1,0 +1,10 @@
+# SBT
+target/
+
+# Editor
+*.sw*
+\#*
+
+# Other
+.DS_Store
+.ensime
