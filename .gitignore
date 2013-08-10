@@ -7,4 +7,4 @@ target/
 
 # Other
 .DS_Store
-.ensime
+.ensime*
