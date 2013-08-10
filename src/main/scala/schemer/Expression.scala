@@ -1,6 +1,7 @@
 package schemer
 
 sealed trait Expression
+case class BooleanExpression(b: Boolean) extends Expression
 case class NumberExpression(n: Double) extends Expression
 case class StringExpression(s: String) extends Expression
 case class SymbolExpression(s: String) extends Expression

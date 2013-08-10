@@ -7,6 +7,11 @@ import scala.util.parsing.combinator._
 
 class ParserSpec extends Specification {
   "The Parser" should {
+    "parse booleans" in {
+      Parser.parse(Parser.boolean, "#t").get must be equalTo(BooleanExpression(true))
+      Parser.parse(Parser.boolean, "#f").get must be equalTo(BooleanExpression(false))
+    }
+
     "parse integers" in {
       Parser.parse(Parser.number, "123").get must be equalTo(NumberExpression(123))
     }

@@ -4,6 +4,7 @@ import scala.util.parsing.combinator._
 
 object Parser extends RegexParsers {
   def expression: Parser[Expression] =
+    boolean   |
     number    |
     string    |
     expSymbol |
@@ -13,6 +14,12 @@ object Parser extends RegexParsers {
     unqoted   |
     macro_    |
     application
+
+  def boolean: Parser[BooleanExpression] =
+    "#" ~> """(t|f)""".r ^^ {
+      case "t" => BooleanExpression(true)
+      case "f" => BooleanExpression(false)
+    }
 
   def number: Parser[NumberExpression] =
     """\d+(\.\d+)?""".r ^^ { number =>
@@ -27,7 +34,7 @@ object Parser extends RegexParsers {
     }
 
   def symbol: Parser[SymbolExpression] =
-    """[^ \t\r\n\(\)\[\]'@]+""".r ^^ { symbol =>
+    """[^ \t\r\n\(\)\[\]'@#]+""".r ^^ { symbol =>
       SymbolExpression(symbol)
     }
 
