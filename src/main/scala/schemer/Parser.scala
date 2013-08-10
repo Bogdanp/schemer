@@ -44,11 +44,6 @@ object Parser extends RegexParsers {
       case xs => ListExpression(xs)
     }
 
-  def parameterList: Parser[ListExpression[SymbolExpression]] =
-    "[" ~> rep(symbol) <~ "]" ^^ {
-      case xs => ListExpression(xs)
-    }
-
   def application: Parser[ApplicationExpression] =
     "(" ~> expression ~ rep(expression) <~ ")" ^^ {
       case f ~ ps => ApplicationExpression(f, ps)
