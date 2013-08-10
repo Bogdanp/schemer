@@ -97,6 +97,27 @@ class ParserSpec extends Specification {
                     SymbolExpression("ep1"),
                     SymbolExpression("ep1"),
                     UnqotedExpression(SymbolExpression("p2")))))))))
+
+      Parser.parse(Parser.macro_, """
+(defmacro defn [name ps &body]
+  (set @name (lambda @ps @body)))
+""").get must be equalTo(
+        MacroExpression(
+          SymbolExpression("defn"),
+          ListExpression(Seq(
+            SymbolExpression("name"),
+            SymbolExpression("ps"),
+            ExpSymbolExpression("body"))),
+          Seq(
+            ApplicationExpression(
+              SymbolExpression("set"),
+              Seq(
+                UnqotedExpression(SymbolExpression("name")),
+                ApplicationExpression(
+                  SymbolExpression("lambda"),
+                  Seq(
+                    UnqotedExpression(SymbolExpression("ps")),
+                    UnqotedExpression(SymbolExpression("body")))))))))
     }
 
     "parse simple application" in {
