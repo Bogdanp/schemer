@@ -34,7 +34,7 @@ object Parser extends RegexParsers {
     }
 
   def symbol: Parser[SymbolExpression] =
-    """[^ \t\r\n\(\)\[\]'@#]+""".r ^^ { symbol =>
+    """[^ \t\r\n\(\)\[\]'@]+""".r ^^ { symbol =>
       SymbolExpression(symbol)
     }
 
