@@ -122,6 +122,21 @@ class ParserSpec extends Specification {
                     UnqotedExpression(SymbolExpression("body")))))))))
     }
 
+    "parse functions" in {
+      Parser.parse(Parser.function, "(defn add [x y] (+ x y))").get must be equalTo(
+        FunctionExpression(
+          SymbolExpression("add"),
+          ListExpression(Seq(
+            SymbolExpression("x"),
+            SymbolExpression("y"))),
+          Seq(
+            ApplicationExpression(
+              SymbolExpression("+"),
+              Seq(
+                SymbolExpression("x"),
+                SymbolExpression("y"))))))
+    }
+
     "parse simple application" in {
       Parser.parse(Parser.application, "(do-stuff)").get must be equalTo(
         ApplicationExpression(

@@ -13,6 +13,7 @@ object Parser extends RegexParsers {
     quoted    |
     unqoted   |
     macro_    |
+    function  |
     application
 
   def boolean: Parser[BooleanExpression] =
@@ -66,6 +67,11 @@ object Parser extends RegexParsers {
   def macro_ : Parser[MacroExpression] =
     "(defmacro" ~> symbol ~ parameterList ~ rep(expression) <~ ")" ^^ {
       case s ~ ps ~ body => MacroExpression(s, ps, body)
+    }
+
+  def function : Parser[FunctionExpression] =
+    "(defn" ~> symbol ~ parameterList ~ rep(expression) <~ ")" ^^ {
+      case s ~ ps ~ body => FunctionExpression(s, ps, body)
     }
 
   def application: Parser[ApplicationExpression] =
