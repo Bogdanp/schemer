@@ -4,6 +4,10 @@ version := "0.1.0"
 
 scalaVersion := "2.10.2"
 
+scalacOptions ++= Seq(
+  "-deprecation"
+)
+
 libraryDependencies ++= Seq(
   "org.specs2" %% "specs2" % "2.1.1" % "test"
 )
