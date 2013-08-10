@@ -65,4 +65,11 @@ object Parser extends RegexParsers {
     "(" ~> expression ~ rep(expression) <~ ")" ^^ {
       case f ~ ps => ApplicationExpression(f, ps)
     }
+
+  def apply(filename: String, input: String): Either[String, (String, Seq[Expression])] =
+    parseAll(rep(expression), input) match {
+      case Success(expressions, _) => Right((filename, expressions))
+      case NoSuccess(error, next)  =>
+        Left(s"${filename}:${next.pos.line}:${next.pos.column}:${error}.")
+    }
 }

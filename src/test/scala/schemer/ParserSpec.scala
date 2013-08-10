@@ -100,7 +100,7 @@ class ParserSpec extends Specification {
 
       Parser.parse(Parser.macro_, """
 (defmacro defn [name ps &body]
-  (set @name (lambda @ps @body)))
+  (define @name (lambda @ps @body)))
 """).get must be equalTo(
         MacroExpression(
           SymbolExpression("defn"),
@@ -110,7 +110,7 @@ class ParserSpec extends Specification {
             ExpSymbolExpression("body"))),
           Seq(
             ApplicationExpression(
-              SymbolExpression("set"),
+              SymbolExpression("define"),
               Seq(
                 UnqotedExpression(SymbolExpression("name")),
                 ApplicationExpression(
@@ -147,6 +147,36 @@ class ParserSpec extends Specification {
               Seq(
                 NumberExpression(6),
                 NumberExpression(2))))))
+    }
+
+    "parse valid schemer source code" in {
+      Parser("stdin", """
+(define s "Hello, World!")
+(puts s)
+""") match {
+        case Right((filename, expressions)) => {
+          filename must be equalTo("stdin")
+          expressions must be equalTo(Seq(
+            ApplicationExpression(
+              SymbolExpression("define"),
+              Seq(
+                SymbolExpression("s"),
+                StringExpression("Hello, World!"))),
+            ApplicationExpression(
+              SymbolExpression("puts"),
+              Seq(
+                SymbolExpression("s")))))
+        }
+        case Left(s) => failure(s)
+      }
+    }
+
+    "parse invalid schemer source code" in {
+      Parser("stdin", "(+ 1 2") match {
+        case Right(_)  => failure("Should never have gotten here.")
+        case Left(err) =>
+          err must be equalTo("stdin:1:7:`)' expected but end of source found.")
+      }
     }
   }
 }
