@@ -71,6 +71,34 @@ class ParserSpec extends Specification {
           ExpSymbolExpression("body"))))
     }
 
+    "parse macros" in {
+      Parser.parse(Parser.macro_, """
+(defmacro or [p1 p2]
+  (let [ep1 @p1]
+    (if ep1
+        ep1
+        @p2)))
+""").get must be equalTo(
+        MacroExpression(
+          SymbolExpression("or"),
+          ListExpression(Seq(
+            SymbolExpression("p1"),
+            SymbolExpression("p2"))),
+          Seq(
+            ApplicationExpression(
+              SymbolExpression("let"),
+              Seq(
+                ListExpression(Seq(
+                  SymbolExpression("ep1"),
+                  UnqotedExpression(SymbolExpression("p1")))),
+                ApplicationExpression(
+                  SymbolExpression("if"),
+                  Seq(
+                    SymbolExpression("ep1"),
+                    SymbolExpression("ep1"),
+                    UnqotedExpression(SymbolExpression("p2")))))))))
+    }
+
     "parse simple application" in {
       Parser.parse(Parser.application, "(do-stuff)").get must be equalTo(
         ApplicationExpression(
