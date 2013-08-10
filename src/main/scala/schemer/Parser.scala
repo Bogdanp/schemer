@@ -10,6 +10,7 @@ object Parser extends RegexParsers {
     list    |
     quoted  |
     unqoted |
+    macro_  |
     application
 
   def number: Parser[NumberExpression] =
@@ -42,6 +43,16 @@ object Parser extends RegexParsers {
   def list: Parser[ListExpression[Expression]] =
     "[" ~> rep(expression) <~ "]" ^^ {
       case xs => ListExpression(xs)
+    }
+
+  def parameterList: Parser[ListExpression[SymbolExpression]] =
+    "[" ~> rep(symbol) <~ "]" ^^ {
+      case xs => ListExpression(xs)
+    }
+
+  def macro_ : Parser[MacroExpression] =
+    "(defmacro" ~> symbol ~ parameterList ~ rep(expression) <~ ")" ^^ {
+      case s ~ ps ~ body => MacroExpression(s, ps, body)
     }
 
   def application: Parser[ApplicationExpression] =
