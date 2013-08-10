@@ -4,13 +4,14 @@ import scala.util.parsing.combinator._
 
 object Parser extends RegexParsers {
   def expression: Parser[Expression] =
-    number  |
-    string  |
-    symbol  |
-    list    |
-    quoted  |
-    unqoted |
-    macro_  |
+    number    |
+    string    |
+    expSymbol |
+    symbol    |
+    list      |
+    quoted    |
+    unqoted   |
+    macro_    |
     application
 
   def number: Parser[NumberExpression] =
@@ -30,13 +31,18 @@ object Parser extends RegexParsers {
       SymbolExpression(symbol)
     }
 
+  def expSymbol: Parser[ExpSymbolExpression] =
+    "&" ~> symbol ^^ {
+      case symbol => ExpSymbolExpression(symbol.s)
+    }
+
   def quoted: Parser[QuotedExpression] =
     "'" ~> expression ^^ {
       case e => QuotedExpression(e)
     }
 
   def unqoted: Parser[UnqotedExpression] =
-    "@" ~> symbol ^^ {
+    "@" ~> expression ^^ {
       case e => UnqotedExpression(e)
     }
 
@@ -45,8 +51,8 @@ object Parser extends RegexParsers {
       case xs => ListExpression(xs)
     }
 
-  def parameterList: Parser[ListExpression[SymbolExpression]] =
-    "[" ~> rep(symbol) <~ "]" ^^ {
+  def parameterList: Parser[ListExpression[Expression]] =
+    "[" ~> rep(expSymbol | symbol) <~ "]" ^^ {
       case xs => ListExpression(xs)
     }
 

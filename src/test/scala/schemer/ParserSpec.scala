@@ -30,6 +30,11 @@ class ParserSpec extends Specification {
       Parser.parse(Parser.symbol, ">=>").get must be equalTo(SymbolExpression(">=>"))
     }
 
+    "parse expansion symbols" in {
+      Parser.parse(Parser.expSymbol, "&xs").get must be equalTo(
+        ExpSymbolExpression("xs"))
+    }
+
     "parse quoted expressions" in {
       Parser.parse(Parser.quoted, "'123").get must be equalTo(
         QuotedExpression(NumberExpression(123)))
@@ -57,6 +62,13 @@ class ParserSpec extends Specification {
           NumberExpression(1),
           StringExpression("String"),
           QuotedExpression(SymbolExpression("quote")))))
+    }
+
+    "parse parameter lists" in {
+      Parser.parse(Parser.parameterList, "[name &body]").get must be equalTo(
+        ListExpression(Seq(
+          SymbolExpression("name"),
+          ExpSymbolExpression("body"))))
     }
 
     "parse simple application" in {
