@@ -2,9 +2,6 @@ package schemer
 
 import org.specs2.mutable._
 
-import scala.util._
-import scala.util.parsing.combinator._
-
 class ParserSpec extends Specification {
   "The Parser" should {
     "parse booleans" in {
