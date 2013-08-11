@@ -31,9 +31,28 @@ case class NumberExpression(n: Double) extends Expression
 case class StringExpression(s: String) extends Expression
 case class SymbolExpression(s: String) extends Expression
 case class ExpSymbolExpression(s: String) extends Expression
-case class ListExpression[A <: Expression](xs: Seq[A]) extends Expression
+case class ListExpression(xs: Seq[Expression]) extends Expression
 case class QuotedExpression(e: Expression) extends Expression
 case class UnqotedExpression(e: Expression) extends Expression
-case class MacroExpression(s: SymbolExpression, ps: ListExpression[Expression], body: Seq[Expression]) extends Expression
-case class FunctionExpression(s: SymbolExpression, ps: ListExpression[Expression], body: Seq[Expression]) extends Expression
+case class MacroExpression(s: SymbolExpression, ps: ListExpression, body: Seq[Expression]) extends Expression
+case class FunctionExpression(s: SymbolExpression, ps: ListExpression, body: Seq[Expression]) extends Expression
 case class ApplicationExpression(f: Expression, ps: Seq[Expression]) extends Expression
+
+object Expression {
+  def bool(b: Boolean)          = BooleanExpression(b)
+  def num(n: Double)            = NumberExpression(n)
+  def str(s: String)            = StringExpression(s)
+  def sym(s: String)            = SymbolExpression(s)
+  def list(xs: Seq[Expression]) = ListExpression(xs)
+  def quoted(e: Expression)     = QuotedExpression(e)
+  def unquoted(e: Expression)   = UnqotedExpression(e)
+
+  def m(s: SymbolExpression, ps: ListExpression, body: Seq[Expression]) =
+    MacroExpression(s, ps, body)
+
+  def fn(s: SymbolExpression, ps: ListExpression, body: Seq[Expression]) =
+    FunctionExpression(s, ps, body)
+
+  def app(f: Expression, ps: Seq[Expression]) =
+    ApplicationExpression(f, ps)
+}
