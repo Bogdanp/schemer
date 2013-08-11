@@ -21,6 +21,11 @@ class ParserSpec extends Specification {
       Parser.parse(Parser.number, "3.14").get must be equalTo(NumberExpression(3.14))
     }
 
+    "parse empty strings" in {
+      Parser.parse(Parser.string, """""""").get must be equalTo(
+        StringExpression(""))
+    }
+
     "parse string literals" in {
       Parser.parse(Parser.string, """"Hello, World!"""").get must be equalTo(
         StringExpression("Hello, World!"))

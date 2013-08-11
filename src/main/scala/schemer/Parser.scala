@@ -43,9 +43,13 @@ object Parser extends RegexParsers {
 
   def string: Parser[StringExpression] =
     """"([^"]|"")*"""".r ^^ { string =>
-      val escaped = string.replace("\"\"", "\"")
+      if (string.length == 2) {
+        StringExpression("")
+      } else {
+        val escaped = string.replace("\"\"", "\"")
 
-      StringExpression(escaped.substring(1, escaped.length - 1))
+        StringExpression(escaped.substring(1, escaped.length - 1))
+      }
     }
 
   def symbol: Parser[SymbolExpression] =
