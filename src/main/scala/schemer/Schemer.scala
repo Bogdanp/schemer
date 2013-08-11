@@ -93,5 +93,6 @@ object Schemer {
     }
   }
 
-  protected def undefinedState = sys.error("Should never have gotten here.")
+  protected def undefinedState =
+    sys.error("the interpreter is in an unefined state")
 }
