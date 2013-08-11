@@ -2,7 +2,7 @@ package schemer.std
 
 import schemer._
 
-object Prelude extends Module {
+object Prelude {
   import Expression._
   import Schemer._
   import Control._
