@@ -4,6 +4,7 @@ target/
 # Editor
 *.sw*
 \#*
+.\#*
 
 # Other
 .DS_Store
