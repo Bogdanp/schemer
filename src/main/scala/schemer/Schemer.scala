@@ -1,6 +1,8 @@
 package schemer
 
 object Schemer {
+  import Expression._
+
   type Expressions = Seq[Expression]
   type EvalResult  = Either[String, (Expression, Env)]
   type EvalResults = Either[String, (Expressions, Env)]
@@ -10,7 +12,7 @@ object Schemer {
       case (_, xs) => {
         withEvalList(xs, env) {
           case (xs, env) =>
-            Right((ListExpression(xs), env))
+            Right((list(xs), env))
         }
       }
     }
@@ -35,13 +37,13 @@ object Schemer {
           case Some(v) => Right(v, env)
           case None    => Left(s"failed to look up '${e.s}'")
         }
-      case e: ListExpression[_] =>
+      case e: ListExpression =>
         withEvalList(e.xs, env) {
           case (xs, env) =>
-            Right((ListExpression(xs), env))
+            Right((list(xs), env))
         }
       case e: UnqotedExpression   => eval(e.e, env)
-      case e: ExpSymbolExpression => eval(SymbolExpression(e.s), env)
+      case e: ExpSymbolExpression => eval(sym(e.s), env)
       case e: QuotedExpression    => Right(e, env)
       case e: MacroExpression     => Right(e, env.set(e.s, e))
       case e: FunctionExpression  => Right(e, env.set(e.s, e))
@@ -71,23 +73,22 @@ object Schemer {
 
   protected def paramsToEnv(ss: Seq[Expression], ps: Seq[Expression], env: Env): Env =
     ss.zipWithIndex.foldLeft(env) {
-      case (env, (sym, idx)) =>
-        sym match {
+      case (env, (symbol, idx)) =>
+        symbol match {
           case s: SymbolExpression    => env.set(s, ps(idx))
           case s: ExpSymbolExpression => env.set(
-            SymbolExpression(s.s),
-            ListExpression(ps.slice(idx, ps.length)))
+            sym(s.s), list(ps.slice(idx, ps.length)))
           case _ => undefinedState
         }
     }
 
   protected def evalBody(xs: Seq[Expression], env: Env): EvalResult = {
     val body = withEvalList(xs, env) {
-      case (xs, env) => Right((ListExpression(xs), env))
+      case (xs, env) => Right((list(xs), env))
     }
 
     body.right.flatMap {
-      case (body: ListExpression[_], env) =>
+      case (body: ListExpression, env) =>
         Right((body.xs.last, env))
       case _ => undefinedState
     }
