@@ -8,6 +8,8 @@ scalacOptions ++= Seq(
   "-deprecation"
 )
 
+mainClass in (Compile, packageBin) := Some("schemer.REPL")
+
 libraryDependencies ++= Seq(
   "org.specs2" %% "specs2" % "2.1.1" % "test"
 )
