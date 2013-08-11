@@ -24,11 +24,21 @@ object Schemer {
           case Right((NativeExpression(fn), env)) =>
             fn(list(ae.ps), env)
           case Right((macro_ : MacroExpression, env)) =>
-            evalBody(macro_.body, paramsToEnv(macro_.ps.xs, ae.ps, env))
+            try {
+              evalBody(macro_.body, paramsToEnv(macro_.ps.xs, ae.ps, env))
+            } catch {
+              case _: IndexOutOfBoundsException =>
+                Left(s"invalid number of arguments passed to function ${macro_.s}")
+            }
           case Right((fn: FunctionExpression, env)) =>
             withEvalList(ae.ps, env) {
               case (ps, env) =>
-                evalBody(fn.body, paramsToEnv(fn.ps.xs, ae.ps, env))
+                try {
+                  evalBody(fn.body, paramsToEnv(fn.ps.xs, ae.ps, env))
+                } catch {
+                  case _: IndexOutOfBoundsException =>
+                    Left(s"invalid number of arguments passed to function ${fn.s}")
+                }
             }
           case Left(err) => Left(err)
           case _         => undefinedState
@@ -73,7 +83,17 @@ object Schemer {
       case (xs, env) => fn(xs, env)
     }
 
-  protected def paramsToEnv(ss: Seq[Expression], ps: Seq[Expression], env: Env): Env =
+  protected def paramsToEnv(ss: Seq[Expression], ps: Seq[Expression], env: Env): Env = {
+    if (ps.length > ss.length) {
+      if (ss.length == 0)
+        throw new IndexOutOfBoundsException()
+
+      ss.last match {
+        case _: ExpSymbolExpression =>
+        case _                      => throw new IndexOutOfBoundsException()
+      }
+    }
+
     ss.zipWithIndex.foldLeft(env) {
       case (env, (symbol, idx)) =>
         symbol match {
@@ -83,6 +103,7 @@ object Schemer {
           case _ => undefinedState
         }
     }
+  }
 
   protected def evalBody(xs: Seq[Expression], env: Env): EvalResult = {
     val body = withEvalList(xs, env) {
