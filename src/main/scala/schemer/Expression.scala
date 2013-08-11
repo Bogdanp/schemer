@@ -3,6 +3,7 @@ package schemer
 sealed trait Expression {
   override def toString: String =
     this match {
+      case NativeExpression(_)      => "(...)"
       case BooleanExpression(true)  => "#t"
       case BooleanExpression(false) => "#f"
       case NumberExpression(n)      => n.toString
@@ -26,6 +27,7 @@ sealed trait Expression {
     }
 }
 
+case class NativeExpression[A <: Expression](fn: (Expression, Env) => Either[String, (A, Env)]) extends Expression
 case class BooleanExpression(b: Boolean) extends Expression
 case class NumberExpression(n: Double) extends Expression
 case class StringExpression(s: String) extends Expression
@@ -55,4 +57,9 @@ object Expression {
 
   def app(f: Expression, ps: Seq[Expression]) =
     ApplicationExpression(f, ps)
+
+  def native[A <: Expression]
+      (fn: (Expression, Env) => Either[String, (A, Env)]):
+      NativeExpression[A] =
+    NativeExpression(fn)
 }

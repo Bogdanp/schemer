@@ -19,14 +19,16 @@ object Schemer {
 
   def eval(expression: Expression, env: Env): EvalResult =
     expression match {
-      case e: ApplicationExpression => {
-        eval(e.f, env) match {
+      case ae: ApplicationExpression => {
+        eval(ae.f, env) match {
+          case Right((NativeExpression(fn), env)) =>
+            fn(list(ae.ps), env)
           case Right((macro_ : MacroExpression, env)) =>
-            evalBody(macro_.body, paramsToEnv(macro_.ps.xs, e.ps, env))
+            evalBody(macro_.body, paramsToEnv(macro_.ps.xs, ae.ps, env))
           case Right((fn: FunctionExpression, env)) =>
-            withEvalList(e.ps, env) {
+            withEvalList(ae.ps, env) {
               case (ps, env) =>
-                evalBody(fn.body, paramsToEnv(fn.ps.xs, e.ps, env))
+                evalBody(fn.body, paramsToEnv(fn.ps.xs, ae.ps, env))
             }
           case Left(err) => Left(err)
           case _         => undefinedState

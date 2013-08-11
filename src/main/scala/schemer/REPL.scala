@@ -15,7 +15,7 @@ object REPL {
     Iterator
       .continually(reader.readLine(prompt))
       .takeWhile(_ != ":q")
-      .foldLeft(Env()) {
+      .foldLeft(std.Prelude.env) {
         case (env, line) => {
           Schemer.eval("stdin", line, env) match {
             case Right((ListExpression(xs), env)) => {
