@@ -14,7 +14,7 @@ object REPL {
 
     Iterator
       .continually(reader.readLine(prompt))
-      .takeWhile(_ != ":q")
+      .takeWhile(l => l != ":q" && l != null)
       .foldLeft(std.Prelude.env) {
         case (env, line) => {
           Schemer.eval("stdin", line, env) match {
@@ -34,5 +34,7 @@ object REPL {
           }
         }
       }
+
+      println
   }
 }
