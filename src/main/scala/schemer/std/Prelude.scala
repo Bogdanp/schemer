@@ -6,6 +6,10 @@ object Prelude {
   import Expression._
   import Schemer._
 
+  protected def arityErr(ps: Seq[Expression], n: Int, name: String): EvalResult =
+    if (ps.length < n) Left(s"not enough arguments for function ${name}")
+    else Left(s"too many arguments for function ${name}")
+
   val set =
     native {
       case (ListExpression(Seq(s: SymbolExpression, v)), env) => {
@@ -15,9 +19,7 @@ object Prelude {
       }
       case (ListExpression(Seq(_, _)), _) =>
         Left("the first parameter to set! must be a symbol")
-      case (ListExpression(ps), _) =>
-        if (ps.length < 2) Left("not enough arguments for function set!")
-        else Left("too many arguments for function set!")
+      case (ListExpression(ps), _) => arityErr(ps, 2, "set!")
     }
 
   val if_ =
@@ -35,6 +37,7 @@ object Prelude {
           case _                               => Left("operation not supported")
         }
       }
+      case (ListExpression(ps), _) => arityErr(ps, 2, "set!")
     }
 
   val env =
