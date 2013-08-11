@@ -13,7 +13,11 @@ object Prelude {
           case (v, env) => Right((v, env.set(s, v)))
         }
       }
-      case _ => Left("invalid parameters")
+      case (ListExpression(Seq(_, _)), _) =>
+        Left("the first parameter to set! must be a symbol")
+      case (ListExpression(ps), _) =>
+        if (ps.length < 2) Left("not enough arguments for function set!")
+        else Left("too many arguments for function set!")
     }
 
   val if_ =
