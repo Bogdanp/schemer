@@ -27,7 +27,7 @@ sealed trait Expression {
     }
 }
 
-case class NativeExpression[A <: Expression](fn: (Expression, Env) => Either[String, (A, Env)]) extends Expression
+case class NativeExpression[A <: Expression](fn: (ListExpression, Env) => Either[String, (A, Env)]) extends Expression
 case class BooleanExpression(b: Boolean) extends Expression
 case class NumberExpression(n: Double) extends Expression
 case class StringExpression(s: String) extends Expression
@@ -59,7 +59,7 @@ object Expression {
     ApplicationExpression(f, ps)
 
   def native[A <: Expression]
-      (fn: (Expression, Env) => Either[String, (A, Env)]):
+      (fn: (ListExpression, Env) => Either[String, (A, Env)]):
       NativeExpression[A] =
     NativeExpression(fn)
 }
