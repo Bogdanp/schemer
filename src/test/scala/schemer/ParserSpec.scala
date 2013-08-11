@@ -9,11 +9,15 @@ class ParserSpec extends Specification {
       Parser.parse(Parser.boolean, "#f").get must be equalTo(BooleanExpression(false))
     }
 
-    "parse integers" in {
+    "parse zero" in {
+      Parser.parse(Parser.number, "0").get must be equalTo(NumberExpression(0))
+    }
+
+    "parse whole numbers" in {
       Parser.parse(Parser.number, "123").get must be equalTo(NumberExpression(123))
     }
 
-    "parse doubles" in {
+    "parse real numbers" in {
       Parser.parse(Parser.number, "3.14").get must be equalTo(NumberExpression(3.14))
     }
 

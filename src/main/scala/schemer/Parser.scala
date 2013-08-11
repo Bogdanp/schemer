@@ -3,6 +3,8 @@ package schemer
 import scala.util.parsing.combinator._
 
 object Parser extends RegexParsers {
+  override val whiteSpace = """(;.*|[ \t\r\n]+)""".r
+
   def expression: Parser[Expression] =
     boolean   |
     number    |
@@ -22,10 +24,22 @@ object Parser extends RegexParsers {
       case "f" => BooleanExpression(false)
     }
 
-  def number: Parser[NumberExpression] =
-    """\d+(\.\d+)?""".r ^^ { number =>
-      NumberExpression(number.toDouble)
-    }
+  def number: Parser[NumberExpression] = {
+    val zero: Parser[NumberExpression] =
+      "0" ^^ { _ => NumberExpression(0) }
+
+    val whole: Parser[NumberExpression] =
+      """[1-9][0-9]*""".r ^^ { number =>
+        NumberExpression(number.toDouble)
+      }
+
+    val real: Parser[NumberExpression] =
+      """([1-9][0-9]*)?\.\d+""".r ^^ { number =>
+        NumberExpression(number.toDouble)
+      }
+
+    real | whole | zero
+  }
 
   def string: Parser[StringExpression] =
     """"([^"]|"")*"""".r ^^ { string =>
