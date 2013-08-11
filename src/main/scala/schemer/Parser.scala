@@ -68,12 +68,12 @@ object Parser extends RegexParsers {
       case e => UnqotedExpression(e)
     }
 
-  def list: Parser[ListExpression[Expression]] =
+  def list: Parser[ListExpression] =
     "[" ~> rep(expression) <~ "]" ^^ {
       case xs => ListExpression(xs)
     }
 
-  def parameterList: Parser[ListExpression[Expression]] =
+  def parameterList: Parser[ListExpression] =
     "[" ~> rep(expSymbol | symbol) <~ "]" ^^ {
       case xs => ListExpression(xs)
     }
