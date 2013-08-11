@@ -10,16 +10,24 @@ object Prelude {
     if (ps.length < n) Left(s"not enough arguments for function ${name}")
     else Left(s"too many arguments for function ${name}")
 
-  val display =
+  def display[A](fn: Seq[Expression] => A) =
     native {
       case (ListExpression(ps), env) =>
         withEvalList(ps, env) {
           case (xs, env) => {
-            println(xs.map(_.show).mkString(" "))
+            fn(xs)
             Right(unit, env)
           }
         }
     }
+
+  val print_ = display { xs =>
+    print(xs.map(_.show).mkString(" "))
+  }
+
+  val println_ = display { xs =>
+    println(xs.map(_.show).mkString(" "))
+  }
 
   val set =
     native {
@@ -53,7 +61,8 @@ object Prelude {
 
   val env =
     Env()
-      .set(sym("display"), display)
+      .set(sym("print"), print_)
+      .set(sym("println"), println_)
       .set(sym("if"), if_)
       .set(sym("set!"), set)
 }
