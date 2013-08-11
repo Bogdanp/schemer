@@ -26,6 +26,12 @@ sealed trait Expression {
       case ApplicationExpression(f, ps) =>
         s"""(${f.toString} ${ps.map(_.toString).mkString(" ")})"""
     }
+
+  def show: String =
+    this match {
+      case StringExpression(s) => s
+      case _                   => this.toString
+    }
 }
 
 case class UnitExpression() extends Expression

@@ -15,7 +15,7 @@ object Prelude {
       case (ListExpression(ps), env) =>
         withEvalList(ps, env) {
           case (xs, env) => {
-            println(xs.map(_.toString).mkString(" "))
+            println(xs.map(_.show).mkString(" "))
             Right(unit, env)
           }
         }
