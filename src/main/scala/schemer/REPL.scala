@@ -18,12 +18,17 @@ object REPL {
       .foldLeft(Env()) {
         case (env, line) => {
           Schemer.eval("stdin", line, env) match {
-            case Right((r, env)) => {
-              println(r)
+            case Right((ListExpression(xs), env)) => {
+              xs.reverse match {
+                case e :: _ => println(e)
+                case _      =>
+              }
+
               env
             }
+            case Right((_, env)) => env
             case Left(err) => {
-              println("error: " ++ err)
+              println(s"error: ${err}.")
               env
             }
           }
