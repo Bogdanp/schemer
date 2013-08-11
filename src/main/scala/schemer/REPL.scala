@@ -1,28 +1,35 @@
 package schemer
 
+import jline._
+
+import scala.language.postfixOps
+
 object REPL {
-  def prompt = print(">> ")
-
   def main(args: Array[String]): Unit = {
-    prompt
+    Terminal.getTerminal().initializeTerminal()
 
-    Iterator.continually(Console.readLine)
+    val reader = new ConsoleReader()
+
+    Iterator
+      .continually(reader.readLine("> "))
       .takeWhile(_ != ":q")
       .foldLeft(Env()) {
-      case (env, line) => {
-        Schemer.eval("stdin", line, env) match {
-          case Right((r, env)) => {
-            println(r)
-            prompt
+        case (env, line) => {
+          if (line isEmpty) {
             env
-          }
-          case Left(err) => {
-            println(err)
-            prompt
-            env
+          } else {
+            Schemer.eval("stdin", line, env) match {
+              case Right((r, env)) => {
+                println(r)
+                env
+              }
+              case Left(err) => {
+                println("error: " ++ err)
+                env
+              }
+            }
           }
         }
       }
-    }
   }
 }
