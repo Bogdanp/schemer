@@ -10,7 +10,7 @@ object Schemer {
       case (_, xs) => {
         withEvalList(xs, env) {
           case (xs, env) =>
-            Right(xs.last, env)
+            Right((ListExpression(xs), env))
         }
       }
     }
