@@ -10,6 +10,17 @@ object Prelude {
     if (ps.length < n) Left(s"not enough arguments for function ${name}")
     else Left(s"too many arguments for function ${name}")
 
+  val display =
+    native {
+      case (ListExpression(ps), env) =>
+        withEvalList(ps, env) {
+          case (xs, env) => {
+            println(xs.map(_.toString).mkString(" "))
+            Right(unit, env)
+          }
+        }
+    }
+
   val set =
     native {
       case (ListExpression(Seq(s: SymbolExpression, v)), env) => {
@@ -42,6 +53,7 @@ object Prelude {
 
   val env =
     Env()
+      .set(sym("display"), display)
       .set(sym("if"), if_)
       .set(sym("set!"), set)
 }

@@ -62,7 +62,7 @@ object Schemer {
       case e                      => Right(e, env)
     }
 
-  protected def evalList(xs: Expressions, env: Env): EvalResults = {
+  def evalList(xs: Expressions, env: Env): EvalResults = {
     val empty: EvalResults = Right((Seq[Expression](), env))
 
     (empty /: xs) {
@@ -75,7 +75,7 @@ object Schemer {
     }
   }
 
-  protected def withEvalList
+  def withEvalList
       (xs: Expressions, env: Env)
       (fn: (Seq[Expression], Env) => EvalResult):
       EvalResult =
@@ -83,7 +83,7 @@ object Schemer {
       case (xs, env) => fn(xs, env)
     }
 
-  protected def paramsToEnv(ss: Seq[Expression], ps: Seq[Expression], env: Env): Env = {
+  def paramsToEnv(ss: Seq[Expression], ps: Seq[Expression], env: Env): Env = {
     if (ps.length > ss.length) {
       if (ss.length == 0)
         throw new IndexOutOfBoundsException()
@@ -105,7 +105,7 @@ object Schemer {
     }
   }
 
-  protected def evalBody(xs: Seq[Expression], env: Env): EvalResult = {
+  def evalBody(xs: Seq[Expression], env: Env): EvalResult = {
     val body = withEvalList(xs, env) {
       case (xs, env) => Right((list(xs), env))
     }
@@ -117,6 +117,6 @@ object Schemer {
     }
   }
 
-  protected def undefinedState =
+  def undefinedState =
     sys.error("the interpreter is in an unefined state")
 }

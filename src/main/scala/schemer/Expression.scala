@@ -3,6 +3,7 @@ package schemer
 sealed trait Expression {
   override def toString: String =
     this match {
+      case UnitExpression()         => "()"
       case NativeExpression(_)      => "(...)"
       case BooleanExpression(true)  => "#t"
       case BooleanExpression(false) => "#f"
@@ -27,6 +28,7 @@ sealed trait Expression {
     }
 }
 
+case class UnitExpression() extends Expression
 case class NativeExpression[A <: Expression](fn: (ListExpression, Env) => Either[String, (A, Env)]) extends Expression
 case class BooleanExpression(b: Boolean) extends Expression
 case class NumberExpression(n: Double) extends Expression
@@ -41,6 +43,8 @@ case class FunctionExpression(s: SymbolExpression, ps: ListExpression, body: Seq
 case class ApplicationExpression(f: Expression, ps: Seq[Expression]) extends Expression
 
 object Expression {
+  val unit = UnitExpression()
+
   def bool(b: Boolean)          = BooleanExpression(b)
   def num(n: Double)            = NumberExpression(n)
   def str(s: String)            = StringExpression(s)
