@@ -5,6 +5,7 @@ target/
 *.sw*
 \#*
 .\#*
+*~undo-tree~
 
 # Other
 .DS_Store
